@@ -433,12 +433,23 @@
             
             const coverElement = document.getElementById('bookCoverDisplay');
             let bgUrl = bookInfo.coverUrl ? bookInfo.coverUrl.trim() : '';
-            if (!bgUrl || bgUrl.includes('google.com/aclk')) {
+            
+            // Validar si la URL introducida es un enlace con redirección o bloqueo de origen
+            if (!bgUrl || bgUrl.includes('google.com/aclk') || bgUrl.includes('drive.google.com')) {
                 bgUrl = 'https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400';
             }
-            coverElement.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${bgUrl}')`;
 
-            // Populate form inputs
+            // Probar la carga de la imagen antes de asignarla a la portada
+            const imgTester = new Image();
+            imgTester.onload = function() {
+                coverElement.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${bgUrl}')`;
+            };
+            imgTester.onerror = function() {
+                coverElement.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400')`;
+            };
+            imgTester.src = bgUrl;
+
+            // Populate form inputs with fresh data
             document.getElementById('editTitle').value = bookInfo.title || '';
             document.getElementById('editAuthor').value = bookInfo.author || '';
             document.getElementById('editCover').value = bookInfo.coverUrl || '';
@@ -446,6 +457,12 @@
         }
 
         function openAdminModal() {
+            // Refrescar los campos del formulario con la información actual al abrir el modal
+            document.getElementById('editTitle').value = bookInfo.title || '';
+            document.getElementById('editAuthor').value = bookInfo.author || '';
+            document.getElementById('editCover').value = bookInfo.coverUrl || '';
+            document.getElementById('editDesc').value = bookInfo.description || '';
+
             adminModal.classList.remove('opacity-0', 'pointer-events-none');
             document.getElementById('adminModalContainer').classList.remove('scale-95');
             document.getElementById('adminModalContainer').classList.add('scale-100');
@@ -477,11 +494,14 @@
                 description: document.getElementById('editDesc').value.trim() || 'Muro de debate del club.'
             };
 
+            // Actualizar objeto en memoria y en almacenamiento local inmediatamente
             bookInfo = { ...bookInfo, ...updatedData };
             saveLocalBook(bookInfo);
+            
+            // Forzar actualización inmediata del banner UI
             updateBookBannerUI();
 
-            // AUTO-CLOSE MODAL IMMEDIATELY
+            // Cerrar modal inmediatamente
             closeAdminModal();
 
             if (bookInfoDocRef) {
