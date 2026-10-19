@@ -221,11 +221,43 @@
         </div>
     </div>
 
+    <!-- Reply Modal -->
+    <div id="replyModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200" id="replyModalContainer">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">↩️</span>
+                    <h3 class="font-bold text-slate-800">Responder a la opinión</h3>
+                </div>
+                <button id="closeReplyModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="replyForm" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+                <input type="hidden" id="replyPostId">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tu Nombre o Apodo <span class="text-purple-500">*</span></label>
+                    <input type="text" id="replyAuthorName" required placeholder="Ej. Ana P." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tu Respuesta <span class="text-purple-500">*</span></label>
+                    <textarea id="replyContent" rows="4" required placeholder="Escribe tu respuesta..." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-[0.98] text-sm cursor-pointer">
+                    Enviar Respuesta 💬
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Firebase Realtime Engine -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, deleteDoc, increment, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, deleteDoc, increment, getDocs, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase Configuration Setup
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'club-lectura-muro';
@@ -240,77 +272,126 @@
                 appId: "1:123456789:web:abcdef"
             };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        let app, auth, db;
+        let useFirestore = true;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) {
+            console.warn("Firebase initialization skipped, using local persistence mode.", e);
+            useFirestore = false;
+        }
 
         let currentUser = null;
-        let posts = [];
+        
+        // LocalStorage Backup Keys
+        const STORAGE_KEY_POSTS = 'club_muro_posts_backup';
+        const STORAGE_KEY_BOOK = 'club_muro_book_backup';
 
         // Profanity list for basic content moderation
         const badWords = ['puta', 'puto', 'mierda', 'pendejo', 'pendeja', 'verga', 'cabron', 'cabrona', 'chinga', 'maldito', 'maldita'];
 
         // Default book info state
-        let bookInfo = {
+        let bookInfo = loadLocalBook() || {
             title: "El tren de la medianoche",
             author: "Matt Haig",
             coverUrl: "https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400",
             description: "¡Este espacio es libre de censura! Aquí puedes debatir abiertamente sobre el final, las decisiones de los personajes y los giros de la trama sin preocuparte por los spoilers."
         };
 
-        // Firestore collection references
-        const postsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club');
-        const bookInfoDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'config', 'current_book');
+        let posts = loadLocalPosts() || [];
 
-        // Authenticate User
-        async function authenticate() {
+        // Helper functions for LocalStorage fallbacks
+        function loadLocalPosts() {
             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInAnonymously(auth);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (err) {
-                console.warn("Autenticación con fallback anónimo", err);
+                const data = localStorage.getItem(STORAGE_KEY_POSTS);
+                return data ? JSON.parse(data) : null;
+            } catch (e) { return null; }
+        }
+
+        function saveLocalPosts(data) {
+            try {
+                localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(data));
+            } catch (e) {}
+        }
+
+        function loadLocalBook() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY_BOOK);
+                return data ? JSON.parse(data) : null;
+            } catch (e) { return null; }
+        }
+
+        function saveLocalBook(data) {
+            try {
+                localStorage.setItem(STORAGE_KEY_BOOK, JSON.stringify(data));
+            } catch (e) {}
+        }
+
+        // Firestore collection references
+        const postsCollectionRef = db ? collection(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club') : null;
+        const bookInfoDocRef = db ? doc(db, 'artifacts', appId, 'public', 'data', 'config', 'current_book') : null;
+
+        // Authenticate User safely
+        async function authenticate() {
+            if (!auth) return;
+            try {
                 await signInAnonymously(auth);
+            } catch (err) {
+                console.warn("Autenticación con fallback local active", err);
             }
         }
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                subscribeToBookInfo();
-                subscribeToPosts();
-            }
-        });
+        if (auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    if (useFirestore) {
+                        subscribeToBookInfo();
+                        subscribeToPosts();
+                    }
+                }
+            });
+            authenticate();
+        } else {
+            updateBookBannerUI();
+            renderPosts();
+        }
 
-        authenticate();
-
-        // Subscribe to book metadata
+        // Subscribe to book metadata with permission fallback
         function subscribeToBookInfo() {
+            if (!bookInfoDocRef) return;
             onSnapshot(bookInfoDocRef, (snapshot) => {
                 if (snapshot.exists()) {
                     bookInfo = { ...bookInfo, ...snapshot.data() };
+                    saveLocalBook(bookInfo);
                     updateBookBannerUI();
                 } else {
-                    setDoc(bookInfoDocRef, bookInfo).catch(err => console.error("Error setting default book:", err));
+                    setDoc(bookInfoDocRef, bookInfo).catch(err => console.warn("Error setting default book:", err));
                 }
             }, (error) => {
-                console.error("Error al obtener info del libro:", error);
+                console.warn("Firestore book permissions fallback applied:", error.message);
+                updateBookBannerUI();
             });
         }
 
-        // Realtime Subscription for posts
+        // Realtime Subscription for posts with permission fallback
         function subscribeToPosts() {
+            if (!postsCollectionRef) return;
             onSnapshot(postsCollectionRef, (snapshot) => {
-                posts = snapshot.docs.map(doc => ({
+                const remotePosts = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
-                posts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                remotePosts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                posts = remotePosts;
+                saveLocalPosts(posts);
                 renderPosts();
             }, (error) => {
-                console.error("Error al sincronizar datos:", error);
+                console.warn("Firestore posts permissions fallback applied:", error.message);
+                renderPosts();
             });
         }
 
@@ -330,6 +411,11 @@
         const closeAdminModalBtn = document.getElementById('closeAdminModalBtn');
         const adminForm = document.getElementById('adminForm');
         const resetBoardBtn = document.getElementById('resetBoardBtn');
+
+        // Reply Modal Controls
+        const replyModal = document.getElementById('replyModal');
+        const closeReplyModalBtn = document.getElementById('closeReplyModalBtn');
+        const replyForm = document.getElementById('replyForm');
 
         function updateBookBannerUI() {
             document.getElementById('bookTitleDisplay').textContent = bookInfo.title || 'Libro del Mes';
@@ -384,30 +470,41 @@
             };
 
             bookInfo = { ...bookInfo, ...updatedData };
+            saveLocalBook(bookInfo);
             updateBookBannerUI();
 
-            try {
-                await setDoc(bookInfoDocRef, updatedData, { merge: true });
-            } catch (err) {
-                console.error("Error al actualizar info del libro en base de datos:", err);
+            if (bookInfoDocRef) {
+                try {
+                    await setDoc(bookInfoDocRef, updatedData, { merge: true });
+                } catch (err) {
+                    console.warn("Firestore sync fallback active for book info update:", err.message);
+                }
             }
             
             closeAdminModal();
         });
 
-        // Reset Board Functionality
+        // Reset Board Functionality with fallback
         resetBoardBtn.addEventListener('click', async () => {
-            const confirmReset = window.confirm("¿Estás segura de que quieres borrar TODAS las opiniones publicadas en el muro? Esta acción no se puede deshacer.");
-            if (!confirmReset) return;
-
-            try {
-                const snapshot = await getDocs(postsCollectionRef);
-                const deletePromises = snapshot.docs.map(d => deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', d.id)));
-                await Promise.all(deletePromises);
-                closeAdminModal();
-            } catch (err) {
-                console.error("Error al reiniciar el muro:", err);
+            if (!confirm("¿Estás segura de que quieres borrar TODAS las opiniones publicadas en el muro? Esta acción no se puede deshacer.")) {
+                return;
             }
+
+            // Instantly reset local state for UI responsiveness
+            posts = [];
+            saveLocalPosts(posts);
+            renderPosts();
+
+            if (postsCollectionRef) {
+                try {
+                    const snapshot = await getDocs(postsCollectionRef);
+                    const deletePromises = snapshot.docs.map(d => deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', d.id)));
+                    await Promise.all(deletePromises);
+                } catch (err) {
+                    console.warn("Firestore reset permissions fallback:", err.message);
+                }
+            }
+            closeAdminModal();
         });
 
         // Modal Controls
@@ -432,9 +529,73 @@
             if (e.target === postModal) closeModal();
         });
 
+        // Reply Modal Controls
+        window.openReplyModal = function(postId) {
+            document.getElementById('replyPostId').value = postId;
+            replyModal.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('replyModalContainer').classList.remove('scale-95');
+            document.getElementById('replyModalContainer').classList.add('scale-100');
+        };
+
+        function closeReplyModal() {
+            replyModal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('replyModalContainer').classList.remove('scale-100');
+            document.getElementById('replyModalContainer').classList.add('scale-95');
+            replyForm.reset();
+        }
+
+        closeReplyModalBtn.addEventListener('click', closeReplyModal);
+        replyModal.addEventListener('click', (e) => {
+            if (e.target === replyModal) closeReplyModal();
+        });
+
+        // Submit Reply Logic with Fallback
+        replyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const postId = document.getElementById('replyPostId').value;
+            const author = document.getElementById('replyAuthorName').value.trim();
+            const content = document.getElementById('replyContent').value.trim();
+
+            if (!postId || !author || !content) return;
+
+            const fullTextToCheck = `${author} ${content}`.toLowerCase();
+            if (badWords.some(word => fullTextToCheck.includes(word))) {
+                alert("⚠️ Tu respuesta contiene lenguaje inapropiado.");
+                return;
+            }
+
+            const newReply = {
+                id: 'rep_' + Date.now(),
+                author,
+                content,
+                createdAt: Date.now()
+            };
+
+            // Local update
+            const postIndex = posts.findIndex(p => p.id === postId);
+            if (postIndex !== -1) {
+                if (!posts[postIndex].replies) posts[postIndex].replies = [];
+                posts[postIndex].replies.push(newReply);
+                saveLocalPosts(posts);
+                renderPosts();
+            }
+
+            if (db) {
+                try {
+                    const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', postId);
+                    await updateDoc(postRef, {
+                        replies: arrayUnion(newReply)
+                    });
+                } catch (err) {
+                    console.warn("Firestore reply sync fallback active:", err.message);
+                }
+            }
+            closeReplyModal();
+        });
+
         searchInput.addEventListener('input', renderPosts);
 
-        // Submit Review Logic
+        // Submit Review Logic with Fallback
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -454,44 +615,55 @@
             }
 
             const newPost = {
+                id: 'post_' + Date.now(),
                 author: name,
                 content: content,
                 highlight: highlight || null,
                 likes: 0,
+                replies: [],
                 createdAt: Date.now(),
                 userId: currentUser ? currentUser.uid : 'anon'
             };
 
-            try {
-                // Optimistic UI push
-                posts.unshift({ id: 'temp_' + Date.now(), ...newPost });
-                renderPosts();
+            // Immediate local UI update
+            posts.unshift(newPost);
+            saveLocalPosts(posts);
+            renderPosts();
+            closeModal();
 
-                await addDoc(postsCollectionRef, newPost);
-                closeModal();
-            } catch (err) {
-                console.error("Error al guardar la opinión:", err);
-                closeModal();
+            if (postsCollectionRef) {
+                try {
+                    await addDoc(postsCollectionRef, newPost);
+                } catch (err) {
+                    console.warn("Firestore addDoc fallback active:", err.message);
+                }
             }
         });
 
-        // Like handler
+        // Like handler with Fallback
         window.likePost = async function(postId) {
             const postIndex = posts.findIndex(p => p.id === postId);
             if (postIndex !== -1) {
                 posts[postIndex].likes = (posts[postIndex].likes || 0) + 1;
+                saveLocalPosts(posts);
                 renderPosts();
             }
 
-            try {
-                const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', postId);
-                await updateDoc(postRef, {
-                    likes: increment(1)
-                });
-            } catch (err) {
-                console.error("Error al reaccionar:", err);
+            if (db) {
+                try {
+                    const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', postId);
+                    await updateDoc(postRef, {
+                        likes: increment(1)
+                    });
+                } catch (err) {
+                    console.warn("Firestore like sync fallback active:", err.message);
+                }
             }
         };
+
+        // Initial UI render
+        updateBookBannerUI();
+        renderPosts();
 
         // Render all posts
         function renderPosts() {
@@ -499,7 +671,10 @@
 
             const filtered = posts.filter(post => {
                 if (!searchTerm) return true;
-                return post.author.toLowerCase().includes(searchTerm) || post.content.toLowerCase().includes(searchTerm);
+                const repliesText = (post.replies || []).map(r => r.author + ' ' + r.content).join(' ');
+                return post.author.toLowerCase().includes(searchTerm) || 
+                       post.content.toLowerCase().includes(searchTerm) || 
+                       repliesText.toLowerCase().includes(searchTerm);
             });
 
             postCount.textContent = posts.length;
@@ -518,6 +693,8 @@
                 const dateStr = post.createdAt 
                     ? new Date(post.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
                     : 'Reciente';
+
+                const replies = post.replies || [];
 
                 return `
                     <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
@@ -547,13 +724,33 @@
                                     ${post.content}
                                 </p>
                             </div>
+
+                            <!-- Reply Chain (Nested Thread) -->
+                            ${replies.length > 0 ? `
+                                <div class="mt-4 pt-3 border-t border-slate-100 space-y-2.5 bg-slate-50/70 p-3 rounded-xl">
+                                    <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider block mb-1">
+                                        💬 Respuestas (${replies.length})
+                                    </span>
+                                    ${replies.map(reply => `
+                                        <div class="bg-white p-2.5 rounded-lg border border-slate-200/60 shadow-2xs">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <span class="font-bold text-slate-800 text-[11px]">${reply.author}</span>
+                                                <span class="text-[9px] text-slate-400">
+                                                    ${reply.createdAt ? new Date(reply.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : ''}
+                                                </span>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-normal">${reply.content}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
                         </div>
 
                         <!-- Card Footer -->
                         <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                            <span class="text-[11px] font-medium text-slate-400 flex items-center gap-1">
-                                <i class="fa-solid fa-comment-dots text-purple-500"></i> Opinión del club
-                            </span>
+                            <button onclick="window.openReplyModal('${post.id}')" class="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition-colors cursor-pointer text-[11px] font-semibold text-indigo-600">
+                                <i class="fa-solid fa-reply"></i> Responder
+                            </button>
                             <button onclick="window.likePost('${post.id}')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg hover:bg-pink-50 hover:text-pink-600 transition-colors cursor-pointer">
                                 <i class="fa-solid fa-heart text-pink-500"></i>
                                 <span class="font-semibold text-slate-600 text-[11px]">${post.likes || 0}</span>
