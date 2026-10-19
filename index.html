@@ -1,4 +1,8 @@
-<!-- ... existing code ... -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Muro de Lectura 📚 - Club de Lectura</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,13 +28,8 @@
         }
     </script>
     <style>
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
@@ -46,16 +45,16 @@
                     <h1 class="font-bold text-slate-900 text-lg leading-tight">Muro de Finalistas 📖</h1>
                     <p class="text-xs text-slate-500 flex items-center gap-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-indigo-500"></span>
-                        Espacio de Debate Libre para las que ya Terminaron
+                        Espacio de Debate del Club
                     </p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button id="openAdminModalBtn" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 transition-all text-xs font-semibold flex items-center gap-1.5">
+                <button id="openAdminModalBtn" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 transition-all text-xs font-semibold flex items-center gap-1.5 cursor-pointer">
                     <i class="fa-solid fa-gear text-slate-500"></i>
                     <span class="hidden md:inline">Administrar Libro</span>
                 </button>
-                <button id="openNewPostModalBtn" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow-md shadow-purple-200 transition-all active:scale-95 flex items-center gap-2">
+                <button id="openNewPostModalBtn" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow-md shadow-purple-200 transition-all active:scale-95 flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-plus"></i>
                     <span class="hidden sm:inline">Escribir Mi Opinión</span>
                     <span class="sm:hidden">Opinar</span>
@@ -74,27 +73,25 @@
                 <div id="bookCoverDisplay" class="w-28 h-40 bg-slate-800 rounded-xl shadow-2xl border-2 border-white/20 flex-shrink-0 flex flex-col items-center justify-center p-3 text-center bg-cover bg-center" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400');">
                     <span class="text-[10px] font-bold text-indigo-300 tracking-widest uppercase">Libro Activo</span>
                     <i class="fa-solid fa-book text-3xl text-indigo-200 my-2"></i>
-                    <span id="bookAuthorCover" class="text-[11px] font-semibold text-white/90">Matt Haig</span>
+                    <span id="bookAuthorCover" class="text-[11px] font-semibold text-white/90">...</span>
                 </div>
                 <div class="flex-1 space-y-2">
                     <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 backdrop-blur-md text-xs font-medium text-indigo-200 border border-indigo-400/30">
                         <i class="fa-solid fa-comments text-indigo-300"></i>
                         Muro Libre de Spoilers para Lectores Finalistas
                     </div>
-                    <h2 id="bookTitleDisplay" class="text-2xl md:text-3xl font-extrabold tracking-tight">El tren de la medianoche</h2>
-                    <p id="bookAuthorDisplay" class="text-indigo-300 font-semibold text-sm">Autor: Matt Haig</p>
-                    <p id="bookDescDisplay" class="text-slate-300 text-sm max-w-2xl leading-relaxed">
-                        ¡Este espacio es libre de censura! Aquí puedes debatir abiertamente sobre el final, las decisiones de los personajes y los giros de la trama sin preocuparte por ocultar spoilers.
-                    </p>
+                    <h2 id="bookTitleDisplay" class="text-2xl md:text-3xl font-extrabold tracking-tight">Cargando libro...</h2>
+                    <p id="bookAuthorDisplay" class="text-indigo-300 font-semibold text-sm">Autor(a): ...</p>
+                    <p id="bookDescDisplay" class="text-slate-300 text-sm max-w-2xl leading-relaxed">...</p>
                     <div class="pt-2 flex flex-wrap gap-4 items-center justify-center md:justify-start text-xs text-slate-300">
                         <span class="flex items-center gap-1.5"><i class="fa-solid fa-users text-purple-400"></i> <span id="postCount">0</span> opiniones publicadas</span>
-                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-eye text-emerald-400"></i> Todas las opiniones visibles directamente</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-rotate text-emerald-400"></i> <button onclick="loadData()" class="underline cursor-pointer hover:text-white">Actualizar datos</button></span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Search Bar Only -->
+        <!-- Search Bar -->
         <section class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-list-ul text-purple-600"></i>
@@ -107,7 +104,7 @@
             </div>
         </section>
 
-        <!-- Cards Masonry Container -->
+        <!-- Cards Container -->
         <div id="postsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <!-- Dynamic Posts render here -->
         </div>
@@ -119,11 +116,10 @@
             </div>
             <h3 class="text-base font-bold text-slate-800">Aún no hay opiniones guardadas</h3>
             <p class="text-slate-500 text-xs mt-1 max-w-sm">Sé la primera en escribir tu opinión o teoría sobre el libro actual.</p>
-            <button id="emptyStateBtn" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-md">
+            <button id="emptyStateBtn" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-md cursor-pointer">
                 Escribir mi opinión
             </button>
         </div>
-
     </main>
 
     <!-- Admin Settings Modal -->
@@ -134,7 +130,7 @@
                     <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-sm font-bold">⚙️</span>
                     <h3 class="font-bold text-slate-800">Administrar Libro y Reiniciar Muro</h3>
                 </div>
-                <button id="closeAdminModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors">
+                <button id="closeAdminModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -144,36 +140,28 @@
                     <label class="block text-xs font-bold text-slate-700 mb-1">Título del Libro en Turno</label>
                     <input type="text" id="editTitle" required class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
                 </div>
-
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Autor(a)</label>
                     <input type="text" id="editAuthor" required class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
                 </div>
-
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">URL de Imagen de Portada (Opcional)</label>
                     <input type="url" id="editCover" placeholder="https://..." class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
-                    <span class="text-[10px] text-slate-400 mt-1 block">Si lo dejas en blanco, se asignará una portada de lectura por defecto.</span>
                 </div>
-
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Descripción / Mensaje para el Club</label>
                     <textarea id="editDesc" rows="3" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all"></textarea>
                 </div>
-
                 <div class="pt-2 border-t border-slate-100">
                     <button type="submit" id="saveAdminBtn" class="w-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-bold py-2.5 rounded-xl shadow-md transition-all text-xs cursor-pointer">
                         Guardar Cambios del Libro 💾
                     </button>
                 </div>
-
                 <div class="pt-4 border-t border-rose-100 bg-rose-50/50 p-4 rounded-2xl border">
                     <h4 class="text-xs font-bold text-rose-800 flex items-center gap-1.5 mb-1">
                         <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Reiniciar Opiniones del Muro
                     </h4>
-                    <p class="text-[11px] text-rose-600 mb-3 leading-relaxed">
-                        Si van a comenzar un nuevo libro, puedes borrar todas las opiniones publicadas actualmente para dejar el muro limpio.
-                    </p>
+                    <p class="text-[11px] text-rose-600 mb-3 leading-relaxed">Borra todas las opiniones actuales para dejar el muro limpio para el siguiente libro.</p>
                     <button type="button" id="resetBoardBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl transition-all text-xs shadow-md cursor-pointer">
                         🗑️ Borrar Todas las Opiniones Actuales
                     </button>
@@ -185,35 +173,28 @@
     <!-- New Post Modal -->
     <div id="postModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200" id="modalContainer">
-            <!-- Modal Header -->
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div class="flex items-center gap-2">
                     <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">💬</span>
                     <h3 class="font-bold text-slate-800">Escribir tu opinión</h3>
                 </div>
-                <button id="closeModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors">
+                <button id="closeModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-
-            <!-- Modal Body Form -->
-            <form id="postForm" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+            <form id="postForm" class="p-6 space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Tu Nombre o Apodo <span class="text-purple-500">*</span></label>
                     <input type="text" id="authorName" required placeholder="Ej. Sofia G." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
                 </div>
-
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Capítulo / Frase / Momento Destacado (Opcional)</label>
-                    <input type="text" id="highlightText" placeholder="Ej. Capítulo 12 o 'El giro en el tren...'" class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Capítulo / Momento Destacado (Opcional)</label>
+                    <input type="text" id="highlightText" placeholder="Ej. Capítulo 12..." class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
                 </div>
-
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Tu Opinión, Comentario o Teoría <span class="text-purple-500">*</span></label>
-                    <textarea id="postContent" rows="5" required placeholder="Escribe libremente lo que vas pensando o lo que te pareció..." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all"></textarea>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tu Opinión o Teoría <span class="text-purple-500">*</span></label>
+                    <textarea id="postContent" rows="5" required placeholder="Escribe libremente..." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all"></textarea>
                 </div>
-
-                <!-- Submit Button -->
                 <button type="submit" id="submitPostBtn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-200 transition-all active:scale-[0.98] text-sm cursor-pointer">
                     Publicar Opinión 🚀
                 </button>
@@ -229,23 +210,20 @@
                     <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">↩️</span>
                     <h3 class="font-bold text-slate-800">Responder a la opinión</h3>
                 </div>
-                <button id="closeReplyModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors">
+                <button id="closeReplyModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-
-            <form id="replyForm" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+            <form id="replyForm" class="p-6 space-y-4">
                 <input type="hidden" id="replyPostId">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Tu Nombre o Apodo <span class="text-purple-500">*</span></label>
                     <input type="text" id="replyAuthorName" required placeholder="Ej. Ana P." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
                 </div>
-
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Tu Respuesta <span class="text-purple-500">*</span></label>
                     <textarea id="replyContent" rows="4" required placeholder="Escribe tu respuesta..." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all"></textarea>
                 </div>
-
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-[0.98] text-sm cursor-pointer">
                     Enviar Respuesta 💬
                 </button>
@@ -253,165 +231,29 @@
         </div>
     </div>
 
-    <!-- Firebase Realtime Engine -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, deleteDoc, increment, getDocs, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- JavaScript con Google Sheets API integrada -->
+    <script>
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzhAfAN7GOvyIAih8uJVA5fKZwdnDNIsCF1VZrYjX6zLqdWlnghB58Q58MWtiHZelao/exec';
 
-        // App identifier for global shared sync
-        const appId = 'club-lectura-muro-shared-v1';
-        
-        // Public Firebase demo/open project configuration for instant multi-device live sync
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : {
-                apiKey: "AIzaSyD-placeholder-key",
-                authDomain: "muro-club-lectura.firebaseapp.com",
-                projectId: "muro-club-lectura",
-                storageBucket: "muro-club-lectura.appspot.com",
-                messagingSenderId: "109876543210",
-                appId: "1:109876543210:web:9876543210fedcba"
-            };
+        let bookInfo = { title: "Cargando...", author: "", coverUrl: "", description: "" };
+        let posts = [];
 
-        let app, auth, db;
-        let useFirestore = true;
-
-        try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-        } catch (e) {
-            console.warn("Firebase initialization skipped, using local fallback mode.", e);
-            useFirestore = false;
-        }
-
-        let currentUser = null;
-        
-        // LocalStorage Backup Keys
-        const STORAGE_KEY_POSTS = 'club_muro_posts_backup';
-        const STORAGE_KEY_BOOK = 'club_muro_book_backup';
-
-        // Profanity list for basic content moderation
         const badWords = ['puta', 'puto', 'mierda', 'pendejo', 'pendeja', 'verga', 'cabron', 'cabrona', 'chinga', 'maldito', 'maldita'];
 
-        // Default book info state
-        let bookInfo = loadLocalBook() || {
-            title: "El tren de la medianoche",
-            author: "Matt Haig",
-            coverUrl: "https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400",
-            description: "¡Este espacio es libre de censura! Aquí puedes debatir abiertamente sobre el final, las decisiones de los personajes y los giros de la trama sin preocuparte por los spoilers."
-        };
-
-        let posts = loadLocalPosts() || [];
-
-        function loadLocalPosts() {
+        async function loadData() {
             try {
-                const data = localStorage.getItem(STORAGE_KEY_POSTS);
-                return data ? JSON.parse(data) : null;
-            } catch (e) { return null; }
-        }
+                const resConfig = await fetch(WEB_APP_URL + '?action=getConfig');
+                bookInfo = await resConfig.json();
+                updateBookBannerUI();
 
-        function saveLocalPosts(data) {
-            try {
-                localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(data));
-            } catch (e) {}
-        }
-
-        function loadLocalBook() {
-            try {
-                const data = localStorage.getItem(STORAGE_KEY_BOOK);
-                return data ? JSON.parse(data) : null;
-            } catch (e) { return null; }
-        }
-
-        function saveLocalBook(data) {
-            try {
-                localStorage.setItem(STORAGE_KEY_BOOK, JSON.stringify(data));
-            } catch (e) {}
-        }
-
-        // Firestore collection references (Public node)
-        const postsCollectionRef = db ? collection(db, 'public_muro_posts') : null;
-        const bookInfoDocRef = db ? doc(db, 'public_muro_config', 'current_book') : null;
-
-        async function authenticate() {
-            if (!auth) return;
-            try {
-                await signInAnonymously(auth);
+                const resPosts = await fetch(WEB_APP_URL);
+                posts = await resPosts.json();
+                posts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                renderPosts();
             } catch (err) {
-                console.warn("Autenticación remota activa con respaldo local", err);
+                console.error("Error al cargar datos de Sheets:", err);
             }
         }
-
-        if (auth) {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    if (useFirestore) {
-                        subscribeToBookInfo();
-                        subscribeToPosts();
-                    }
-                }
-            });
-            authenticate();
-        } else {
-            updateBookBannerUI();
-            renderPosts();
-        }
-
-        function subscribeToBookInfo() {
-            if (!bookInfoDocRef) return;
-            onSnapshot(bookInfoDocRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    bookInfo = { ...bookInfo, ...snapshot.data() };
-                    saveLocalBook(bookInfo);
-                    updateBookBannerUI();
-                } else {
-                    setDoc(bookInfoDocRef, bookInfo).catch(err => console.warn("Error enviando datos iniciales del libro:", err));
-                }
-            }, (error) => {
-                console.warn("Realtime sync active via fallback:", error.message);
-                updateBookBannerUI();
-            });
-        }
-
-        function subscribeToPosts() {
-            if (!postsCollectionRef) return;
-            onSnapshot(postsCollectionRef, (snapshot) => {
-                const remotePosts = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                remotePosts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                posts = remotePosts;
-                saveLocalPosts(posts);
-                renderPosts();
-            }, (error) => {
-                console.warn("Realtime posts fallback active:", error.message);
-                renderPosts();
-            });
-        }
-
-        const postsGrid = document.getElementById('postsGrid');
-        const emptyState = document.getElementById('emptyState');
-        const postModal = document.getElementById('postModal');
-        const openNewPostModalBtn = document.getElementById('openNewPostModalBtn');
-        const emptyStateBtn = document.getElementById('emptyStateBtn');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const postForm = document.getElementById('postForm');
-        const searchInput = document.getElementById('searchInput');
-        const postCount = document.getElementById('postCount');
-
-        const adminModal = document.getElementById('adminModal');
-        const openAdminModalBtn = document.getElementById('openAdminModalBtn');
-        const closeAdminModalBtn = document.getElementById('closeAdminModalBtn');
-        const adminForm = document.getElementById('adminForm');
-        const resetBoardBtn = document.getElementById('resetBoardBtn');
-
-        const replyModal = document.getElementById('replyModal');
-        const closeReplyModalBtn = document.getElementById('closeReplyModalBtn');
-        const replyForm = document.getElementById('replyForm');
 
         function updateBookBannerUI() {
             document.getElementById('bookTitleDisplay').textContent = bookInfo.title || 'Libro del Mes';
@@ -421,9 +263,7 @@
             
             const coverElement = document.getElementById('bookCoverDisplay');
             let bgUrl = bookInfo.coverUrl ? bookInfo.coverUrl.trim() : '';
-            if (!bgUrl || bgUrl.includes('google.com/aclk')) {
-                bgUrl = 'https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400';
-            }
+            if (!bgUrl) bgUrl = 'https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400';
             coverElement.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${bgUrl}')`;
 
             document.getElementById('editTitle').value = bookInfo.title || '';
@@ -432,123 +272,49 @@
             document.getElementById('editDesc').value = bookInfo.description || '';
         }
 
-        function openAdminModal() {
+        const adminModal = document.getElementById('adminModal');
+        const postModal = document.getElementById('postModal');
+        const replyModal = document.getElementById('replyModal');
+
+        document.getElementById('openAdminModalBtn').addEventListener('click', () => {
             adminModal.classList.remove('opacity-0', 'pointer-events-none');
             document.getElementById('adminModalContainer').classList.remove('scale-95');
-            document.getElementById('adminModalContainer').classList.add('scale-100');
-        }
-
-        function closeAdminModal() {
+        });
+        document.getElementById('closeAdminModalBtn').addEventListener('click', () => {
             adminModal.classList.add('opacity-0', 'pointer-events-none');
-            document.getElementById('adminModalContainer').classList.remove('scale-100');
-            document.getElementById('adminModalContainer').classList.add('scale-95');
-        }
-
-        openAdminModalBtn.addEventListener('click', openAdminModal);
-        closeAdminModalBtn.addEventListener('click', closeAdminModal);
-        adminModal.addEventListener('click', (e) => { if (e.target === adminModal) closeAdminModal(); });
-
-        adminForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-
-            let coverInput = document.getElementById('editCover').value.trim();
-            if (coverInput.includes('google.com/aclk')) {
-                coverInput = '';
-            }
-
-            const updatedData = {
-                title: document.getElementById('editTitle').value.trim() || 'Libro del Mes',
-                author: document.getElementById('editAuthor').value.trim() || 'Autor',
-                coverUrl: coverInput,
-                description: document.getElementById('editDesc').value.trim() || 'Muro de debate del club.'
-            };
-
-            bookInfo = { ...bookInfo, ...updatedData };
-            saveLocalBook(bookInfo);
-            updateBookBannerUI();
-            closeAdminModal();
-
-            if (bookInfoDocRef) {
-                try {
-                    await setDoc(bookInfoDocRef, updatedData, { merge: true });
-                } catch (err) {
-                    console.warn("Sincronización remota pendiente:", err.message);
-                }
-            }
         });
 
-        resetBoardBtn.addEventListener('click', async () => {
-            if (!confirm("¿Estás segura de que quieres borrar TODAS las opiniones publicadas en el muro? Esta acción no se puede deshacer.")) {
-                return;
-            }
+        document.getElementById('openNewPostModalBtn').addEventListener('click', openPostModalFunc);
+        document.getElementById('emptyStateBtn').addEventListener('click', openPostModalFunc);
+        document.getElementById('closeModalBtn').addEventListener('click', closePostModalFunc);
 
-            posts = [];
-            saveLocalPosts(posts);
-            renderPosts();
-            closeAdminModal();
+        function openPostModalFunc() { postModal.classList.remove('opacity-0', 'pointer-events-none'); }
+        function closePostModalFunc() { postModal.classList.add('opacity-0', 'pointer-events-none'); }
 
-            if (postsCollectionRef) {
-                try {
-                    const snapshot = await getDocs(postsCollectionRef);
-                    const deletePromises = snapshot.docs.map(d => deleteDoc(doc(db, 'public_muro_posts', d.id)));
-                    await Promise.all(deletePromises);
-                } catch (err) {
-                    console.warn("Borrado en la nube completado localmente:", err.message);
-                }
-            }
+        document.getElementById('closeReplyModalBtn').addEventListener('click', () => {
+            replyModal.classList.add('opacity-0', 'pointer-events-none');
         });
-
-        function openPostModal() {
-            postModal.classList.remove('opacity-0', 'pointer-events-none');
-            document.getElementById('modalContainer').classList.remove('scale-95');
-            document.getElementById('modalContainer').classList.add('scale-100');
-        }
-
-        function closePostModal() {
-            postModal.classList.add('opacity-0', 'pointer-events-none');
-            document.getElementById('modalContainer').classList.remove('scale-100');
-            document.getElementById('modalContainer').classList.add('scale-95');
-        }
-
-        openNewPostModalBtn.addEventListener('click', openPostModal);
-        emptyStateBtn.addEventListener('click', openPostModal);
-        closeModalBtn.addEventListener('click', closePostModal);
-        postModal.addEventListener('click', (e) => { if (e.target === postModal) closePostModal(); });
 
         window.openReplyModal = function(postId) {
             document.getElementById('replyPostId').value = postId;
             replyModal.classList.remove('opacity-0', 'pointer-events-none');
-            document.getElementById('replyModalContainer').classList.remove('scale-95');
-            document.getElementById('replyModalContainer').classList.add('scale-100');
         };
 
-        function closeReplyModal() {
-            replyModal.classList.add('opacity-0', 'pointer-events-none');
-            document.getElementById('replyModalContainer').classList.remove('scale-100');
-            document.getElementById('replyModalContainer').classList.add('scale-95');
-            replyForm.reset();
-        }
-
-        closeReplyModalBtn.addEventListener('click', closeReplyModal);
-        replyModal.addEventListener('click', (e) => { if (e.target === replyModal) closeReplyModal(); });
-
-        postForm.addEventListener('submit', async (e) => {
+        document.getElementById('postForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const author = document.getElementById('authorName').value.trim();
             const highlight = document.getElementById('highlightText').value.trim();
             const content = document.getElementById('postContent').value.trim();
 
             if (!author || !content) return;
-
-            const fullTextToCheck = `${author} ${highlight} ${content}`.toLowerCase();
-            if (badWords.some(word => fullTextToCheck.includes(word))) {
-                alert("⚠️ Por favor evita incluir palabras inapropiadas en tu comentario.");
+            if (badWords.some(w => `${author} ${highlight} ${content}`.toLowerCase().includes(w))) {
+                alert("⚠️ Evita incluir palabras inapropiadas.");
                 return;
             }
 
             const newPost = {
+                action: 'addPost',
+                id: 'post_' + Date.now(),
                 author,
                 highlight,
                 content,
@@ -557,24 +323,19 @@
                 createdAt: Date.now()
             };
 
-            const localPostObj = { id: 'post_' + Date.now(), ...newPost };
-            posts.unshift(localPostObj);
-            saveLocalPosts(posts);
+            posts.unshift(newPost);
             renderPosts();
+            document.getElementById('postForm').reset();
+            closePostModalFunc();
 
-            postForm.reset();
-            closePostModal();
-
-            if (postsCollectionRef) {
-                try {
-                    await addDoc(postsCollectionRef, newPost);
-                } catch (err) {
-                    console.warn("Publicación remota guardada localmente:", err.message);
-                }
-            }
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(newPost)
+            });
+            loadData();
         });
 
-        replyForm.addEventListener('submit', async (e) => {
+        document.getElementById('replyForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const postId = document.getElementById('replyPostId').value;
             const author = document.getElementById('replyAuthorName').value.trim();
@@ -582,96 +343,97 @@
 
             if (!postId || !author || !content) return;
 
-            const fullTextToCheck = `${author} ${content}`.toLowerCase();
-            if (badWords.some(word => fullTextToCheck.includes(word))) {
-                alert("⚠️ Tu respuesta contiene lenguaje inapropiado.");
-                return;
-            }
-
-            const newReply = {
+            const reply = {
                 id: 'rep_' + Date.now(),
                 author,
                 content,
                 createdAt: Date.now()
             };
 
-            const postIndex = posts.findIndex(p => p.id === postId);
-            if (postIndex !== -1) {
-                if (!posts[postIndex].replies) posts[postIndex].replies = [];
-                posts[postIndex].replies.push(newReply);
-                saveLocalPosts(posts);
-                renderPosts();
-            }
+            replyModal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('replyForm').reset();
 
-            closeReplyModal();
-
-            if (db) {
-                try {
-                    const postRef = doc(db, 'public_muro_posts', postId);
-                    await updateDoc(postRef, {
-                        replies: arrayUnion(newReply)
-                    });
-                } catch (err) {
-                    console.warn("Respuesta remota guardada localmente:", err.message);
-                }
-            }
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'addReply', postId, reply })
+            });
+            loadData();
         });
 
-        searchInput.addEventListener('input', renderPosts);
-
         window.likePost = async function(postId) {
-            const post = posts.find(p => p.id === postId);
-            if (post) {
-                post.likes = (post.likes || 0) + 1;
-                saveLocalPosts(posts);
+            const p = posts.find(x => x.id === postId);
+            if (p) {
+                p.likes = (p.likes || 0) + 1;
                 renderPosts();
-
-                if (db && !postId.startsWith('post_')) {
-                    try {
-                        const postRef = doc(doc(db, 'public_muro_posts', postId));
-                        await updateDoc(postRef, { likes: increment(1) });
-                    } catch (err) {
-                        console.warn("Me gusta guardado localmente:", err.message);
-                    }
-                }
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'likePost', id: postId })
+                });
             }
         };
 
-        updateBookBannerUI();
-        renderPosts();
+        document.getElementById('adminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                action: 'saveBook',
+                title: document.getElementById('editTitle').value.trim(),
+                author: document.getElementById('editAuthor').value.trim(),
+                coverUrl: document.getElementById('editCover').value.trim(),
+                description: document.getElementById('editDesc').value.trim()
+            };
+
+            bookInfo = payload;
+            updateBookBannerUI();
+            adminModal.classList.add('opacity-0', 'pointer-events-none');
+
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+        });
+
+        document.getElementById('resetBoardBtn').addEventListener('click', async () => {
+            if (!confirm("¿Borrar todas las opiniones del muro?")) return;
+            posts = [];
+            renderPosts();
+            adminModal.classList.add('opacity-0', 'pointer-events-none');
+
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'resetBoard' })
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', renderPosts);
 
         function renderPosts() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-
-            const filtered = posts.filter(post => {
-                if (!searchTerm) return true;
-                const repliesText = (post.replies || []).map(r => r.author + ' ' + r.content).join(' ');
-                return post.author.toLowerCase().includes(searchTerm) || 
-                       post.content.toLowerCase().includes(searchTerm) || 
-                       repliesText.toLowerCase().includes(searchTerm);
+            const term = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filtered = posts.filter(p => {
+                if (!term) return true;
+                const repStr = (p.replies || []).map(r => r.author + ' ' + r.content).join(' ');
+                return p.author.toLowerCase().includes(term) || p.content.toLowerCase().includes(term) || repStr.toLowerCase().includes(term);
             });
 
-            postCount.textContent = posts.length;
+            document.getElementById('postCount').textContent = posts.length;
+            const grid = document.getElementById('postsGrid');
+            const empty = document.getElementById('emptyState');
 
             if (filtered.length === 0) {
-                postsGrid.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                empty.classList.add('flex');
                 return;
             }
 
-            emptyState.classList.add('hidden');
-            emptyState.classList.remove('flex');
+            empty.classList.add('hidden');
+            empty.classList.remove('flex');
 
-            postsGrid.innerHTML = filtered.map((post) => {
-                const dateStr = post.createdAt 
-                    ? new Date(post.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
-                    : 'Reciente';
-
+            grid.innerHTML = filtered.map(post => {
+                const dateStr = post.createdAt ? new Date(post.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '';
                 const replies = post.replies || [];
 
                 return `
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-3">
                                 <div class="flex items-center gap-2.5">
@@ -684,39 +446,23 @@
                                     </div>
                                 </div>
                             </div>
-
-                            ${post.highlight ? `
-                                <div class="mb-3 px-3 py-1.5 bg-indigo-50 rounded-lg text-xs text-indigo-900 font-medium italic border-l-2 border-indigo-500">
-                                    "${post.highlight}"
-                                </div>
-                            ` : ''}
-
-                            <div class="my-2">
-                                <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">
-                                    ${post.content}
-                                </p>
-                            </div>
-
+                            ${post.highlight ? `<div class="mb-3 px-3 py-1.5 bg-indigo-50 rounded-lg text-xs text-indigo-900 font-medium italic border-l-2 border-indigo-500">"${post.highlight}"</div>` : ''}
+                            <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">${post.content}</p>
+                            
                             ${replies.length > 0 ? `
                                 <div class="mt-4 pt-3 border-t border-slate-100 space-y-2.5 bg-slate-50/70 p-3 rounded-xl">
-                                    <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider block mb-1">
-                                        💬 Respuestas (${replies.length})
-                                    </span>
-                                    ${replies.map(reply => `
+                                    <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider block mb-1">💬 Respuestas (${replies.length})</span>${replies.map(r => `
                                         <div class="bg-white p-2.5 rounded-lg border border-slate-200/60 shadow-2xs">
                                             <div class="flex items-center justify-between mb-1">
-                                                <span class="font-bold text-slate-800 text-[11px]">${reply.author}</span>
-                                                <span class="text-[9px] text-slate-400">
-                                                    ${reply.createdAt ? new Date(reply.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : ''}
-                                                </span>
+                                                <span class="font-bold text-slate-800 text-[11px]">${r.author}</span>
+                                                <span class="text-[9px] text-slate-400">${r.createdAt ? new Date(r.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : ''}</span>
                                             </div>
-                                            <p class="text-xs text-slate-600 leading-normal">${reply.content}</p>
+                                            <p class="text-xs text-slate-600 leading-normal">${r.content}</p>
                                         </div>
                                     `).join('')}
                                 </div>
                             ` : ''}
                         </div>
-
                         <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
                             <button onclick="window.openReplyModal('${post.id}')" class="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition-colors cursor-pointer text-[11px] font-semibold text-indigo-600">
                                 <i class="fa-solid fa-reply"></i> Responder
@@ -730,6 +476,8 @@
                 `;
             }).join('');
         }
+
+        loadData();
     </script>
 </body>
 </html>
