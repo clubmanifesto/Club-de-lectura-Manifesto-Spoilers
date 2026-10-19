@@ -473,6 +473,9 @@
             saveLocalBook(bookInfo);
             updateBookBannerUI();
 
+            // Auto-close modal immediately upon submit
+            closeAdminModal();
+
             if (bookInfoDocRef) {
                 try {
                     await setDoc(bookInfoDocRef, updatedData, { merge: true });
@@ -480,8 +483,6 @@
                     console.warn("Firestore sync fallback active for book info update:", err.message);
                 }
             }
-            
-            closeAdminModal();
         });
 
         // Reset Board Functionality with fallback
@@ -495,6 +496,9 @@
             saveLocalPosts(posts);
             renderPosts();
 
+            // Auto-close modal immediately upon reset
+            closeAdminModal();
+
             if (postsCollectionRef) {
                 try {
                     const snapshot = await getDocs(postsCollectionRef);
@@ -504,51 +508,7 @@
                     console.warn("Firestore reset permissions fallback:", err.message);
                 }
             }
-            closeAdminModal();
         });
-
-        // Modal Controls
-        function openModal() {
-            postModal.classList.remove('opacity-0', 'pointer-events-none');
-            document.getElementById('modalContainer').classList.remove('scale-95');
-            document.getElementById('modalContainer').classList.add('scale-100');
-        }
-
-        function closeModal() {
-            postModal.classList.add('opacity-0', 'pointer-events-none');
-            document.getElementById('modalContainer').classList.remove('scale-100');
-            document.getElementById('modalContainer').classList.add('scale-95');
-            postForm.reset();
-        }
-
-        openNewPostModalBtn.addEventListener('click', openModal);
-        emptyStateBtn.addEventListener('click', openModal);
-        closeModalBtn.addEventListener('click', closeModal);
-
-        postModal.addEventListener('click', (e) => {
-            if (e.target === postModal) closeModal();
-        });
-
-        // Reply Modal Controls
-        window.openReplyModal = function(postId) {
-            document.getElementById('replyPostId').value = postId;
-            replyModal.classList.remove('opacity-0', 'pointer-events-none');
-            document.getElementById('replyModalContainer').classList.remove('scale-95');
-            document.getElementById('replyModalContainer').classList.add('scale-100');
-        };
-
-        function closeReplyModal() {
-            replyModal.classList.add('opacity-0', 'pointer-events-none');
-            document.getElementById('replyModalContainer').classList.remove('scale-100');
-            document.getElementById('replyModalContainer').classList.add('scale-95');
-            replyForm.reset();
-        }
-
-        closeReplyModalBtn.addEventListener('click', closeReplyModal);
-        replyModal.addEventListener('click', (e) => {
-            if (e.target === replyModal) closeReplyModal();
-        });
-
         // Submit Reply Logic with Fallback
         replyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -580,6 +540,9 @@
                 renderPosts();
             }
 
+            // Auto-close modal immediately upon reply submit
+            closeReplyModal();
+
             if (db) {
                 try {
                     const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', postId);
@@ -590,71 +553,7 @@
                     console.warn("Firestore reply sync fallback active:", err.message);
                 }
             }
-            closeReplyModal();
         });
-
-        searchInput.addEventListener('input', renderPosts);
-
-        // Submit Review Logic with Fallback
-        postForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const name = document.getElementById('authorName').value.trim();
-            const content = document.getElementById('postContent').value.trim();
-            const highlight = document.getElementById('highlightText').value.trim();
-
-            if (!name || !content) return;
-
-            // Profanity moderation check
-            const fullTextToCheck = `${name} ${content} ${highlight}`.toLowerCase();
-            const containsBadWords = badWords.some(word => fullTextToCheck.includes(word));
-
-            if (containsBadWords) {
-                alert("⚠️ Tu publicación contiene lenguaje inapropiado. Por favor mantengamos un espacio respetuoso en el club.");
-                return;
-            }
-
-            const newPost = {
-                id: 'post_' + Date.now(),
-                author: name,
-                content: content,
-                highlight: highlight || null,
-                likes: 0,
-                replies: [],
-                createdAt: Date.now(),
-                userId: currentUser ? currentUser.uid : 'anon'
-            };
-
-            // Immediate local UI update and auto-close modal
-            posts.unshift(newPost);
-            saveLocalPosts(posts);
-            renderPosts();
-            closeModal();
-
-            if (postsCollectionRef) {
-                try {
-                    await addDoc(postsCollectionRef, newPost);
-                } catch (err) {
-                    console.warn("Firestore addDoc fallback active:", err.message);
-                }
-            }
-        });
-
-        // Like handler with Fallback
-        window.likePost = async function(postId) {
-            const postIndex = posts.findIndex(p => p.id === postId);
-            if (postIndex !== -1) {
-                posts[postIndex].likes = (posts[postIndex].likes || 0) + 1;
-                saveLocalPosts(posts);
-                renderPosts();
-            }
-
-            if (db) {
-                try {
-                    const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', postId);
-                    await updateDoc(postRef, {
-                        likes: increment(1)
-                    });
                 } catch (err) {
                     console.warn("Firestore like sync fallback active:", err.message);
                 }
