@@ -1,0 +1,574 @@
+<!-- ... existing code ... -->
+    <title>Muro de Lectura 📚 - Club de Lectura</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fdf4ff',
+                            100: '#fae8ff',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-purple-200">
+                    <i class="fa-solid fa-book-open text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-slate-900 text-lg leading-tight">Muro de Finalistas 📖</h1>
+                    <p class="text-xs text-slate-500 flex items-center gap-1">
+                        <span class="inline-block w-2 h-2 rounded-full bg-indigo-500"></span>
+                        Espacio de Debate Libre para las que ya Terminaron
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="openAdminModalBtn" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 transition-all text-xs font-semibold flex items-center gap-1.5">
+                    <i class="fa-solid fa-gear text-slate-500"></i>
+                    <span class="hidden md:inline">Administrar Libro</span>
+                </button>
+                <button id="openNewPostModalBtn" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow-md shadow-purple-200 transition-all active:scale-95 flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="hidden sm:inline">Escribir Mi Opinión</span>
+                    <span class="sm:hidden">Opinar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 flex flex-col gap-6">
+
+        <!-- Book Banner -->
+        <section class="bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="relative z-10 flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left">
+                <div id="bookCoverDisplay" class="w-28 h-40 bg-slate-800 rounded-xl shadow-2xl border-2 border-white/20 flex-shrink-0 flex flex-col items-center justify-center p-3 text-center bg-cover bg-center" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400');">
+                    <span class="text-[10px] font-bold text-indigo-300 tracking-widest uppercase">Libro Activo</span>
+                    <i class="fa-solid fa-book text-3xl text-indigo-200 my-2"></i>
+                    <span id="bookAuthorCover" class="text-[11px] font-semibold text-white/90">Matt Haig</span>
+                </div>
+                <div class="flex-1 space-y-2">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 backdrop-blur-md text-xs font-medium text-indigo-200 border border-indigo-400/30">
+                        <i class="fa-solid fa-comments text-indigo-300"></i>
+                        Muro Libre de Spoilers para Lectores Finalistas
+                    </div>
+                    <h2 id="bookTitleDisplay" class="text-2xl md:text-3xl font-extrabold tracking-tight">El tren de la medianoche</h2>
+                    <p id="bookAuthorDisplay" class="text-indigo-300 font-semibold text-sm">Autor: Matt Haig</p>
+                    <p id="bookDescDisplay" class="text-slate-300 text-sm max-w-2xl leading-relaxed">
+                        ¡Este espacio es libre de censura! Aquí puedes debatir abiertamente sobre el final, las decisiones de los personajes y los giros de la trama sin preocuparte por ocultar spoilers.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-4 items-center justify-center md:justify-start text-xs text-slate-300">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-users text-purple-400"></i> <span id="postCount">0</span> opiniones publicadas</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-eye text-emerald-400"></i> Todas las opiniones visibles directamente</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Bar Only (Filters Removed) -->
+        <section class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-list-ul text-purple-600"></i>
+                <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Muro Abierto de Opiniones</span>
+            </div>
+            
+            <div class="relative w-full sm:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" placeholder="Buscar por integrante o contenido..." class="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-all">
+            </div>
+        </section>
+
+        <!-- Cards Masonry Container -->
+        <div id="postsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Dynamic Posts render here -->
+        </div>
+
+        <!-- Empty state -->
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center bg-white rounded-3xl border border-dashed border-slate-300">
+            <div class="w-16 h-16 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-3">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800">Aún no hay opiniones guardadas</h3>
+            <p class="text-slate-500 text-xs mt-1 max-w-sm">Sé la primera en escribir tu reseña sobre el libro actual.</p>
+            <button id="emptyStateBtn" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-md">
+                Escribir mi opinión
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Admin Settings Modal -->
+    <div id="adminModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200" id="adminModalContainer">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-sm font-bold">⚙️</span>
+                    <h3 class="font-bold text-slate-800">Administrar Libro y Reiniciar Muro</h3>
+                </div>
+                <button id="closeAdminModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="adminForm" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Título del Libro en Turno</label>
+                    <input type="text" id="editTitle" required class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Autor(a)</label>
+                    <input type="text" id="editAuthor" required class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">URL de Imagen de Portada (Opcional)</label>
+                    <input type="url" id="editCover" placeholder="https://..." class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
+                    <span class="text-[10px] text-slate-400 mt-1 block">Si lo dejas en blanco, se asignará una portada de lectura por defecto.</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Descripción / Mensaje para el Club</label>
+                    <textarea id="editDesc" rows="3" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all"></textarea>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100">
+                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl shadow-md transition-all text-xs">
+                        Guardar Cambios del Libro 💾
+                    </button>
+                </div>
+
+                <div class="pt-4 border-t border-rose-100 bg-rose-50/50 p-4 rounded-2xl border">
+                    <h4 class="text-xs font-bold text-rose-800 flex items-center gap-1.5 mb-1">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Reiniciar Opiniones del Muro
+                    </h4>
+                    <p class="text-[11px] text-rose-600 mb-3 leading-relaxed">
+                        Si van a comenzar un nuevo libro, puedes borrar todas las opiniones publicadas actualmente para dejar el muro limpio.
+                    </p>
+                    <button type="button" id="resetBoardBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl transition-all text-xs shadow-md">
+                        🗑️ Borrar Todas las Opiniones Actuales
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- New Post Modal -->
+    <div id="postModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-200" id="modalContainer">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">💬</span>
+                    <h3 class="font-bold text-slate-800">Tu reseña completa sobre el libro</h3>
+                </div>
+                <button id="closeModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body Form -->
+            <form id="postForm" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tu Nombre o Apodo <span class="text-purple-500">*</span></label>
+                    <input type="text" id="authorName" required placeholder="Ej. Sofia G." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">¿Qué calificación le das a este libro?</label>
+                    <div class="flex items-center gap-2" id="starRatingSelector">
+                        <button type="button" data-value="1" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition-colors"><i class="fa-solid fa-star"></i></button>
+                        <button type="button" data-value="2" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition-colors"><i class="fa-solid fa-star"></i></button>
+                        <button type="button" data-value="3" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition-colors"><i class="fa-solid fa-star"></i></button>
+                        <button type="button" data-value="4" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition-colors"><i class="fa-solid fa-star"></i></button>
+                        <button type="button" data-value="5" class="star-btn text-2xl text-amber-400 transition-colors"><i class="fa-solid fa-star"></i></button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Personaje Favorito o Frase Inolvidable (Opcional)</label>
+                    <input type="text" id="highlightText" placeholder="Ej. El gran cambio en el capítulo 12..." class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tu Opinión General o Análisis del Final <span class="text-purple-500">*</span></label>
+                    <textarea id="postContent" rows="5" required placeholder="Escribe libremente tu opinión y teorías sobre el final..." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitPostBtn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-200 transition-all active:scale-[0.98] text-sm">
+                    Publicar Opinión 🚀
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase Realtime Engine -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, setDoc, deleteDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration Setup
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'club-lectura-muro';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "demo-api-key",
+                authDomain: "demo.firebaseapp.com",
+                projectId: "demo-project",
+                storageBucket: "demo.appspot.com",
+                messagingSenderId: "123456789",
+                appId: "1:123456789:web:abcdef"
+            };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let posts = [];
+        let ratingValue = 5;
+
+        // Default book info state
+        let bookInfo = {
+            title: "El tren de la medianoche",
+            author: "Matt Haig",
+            coverUrl: "https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400",
+            description: "¡Este espacio es libre de censura! Aquí puedes debatir abiertamente sobre el final, las decisiones de los personajes y los giros de la trama sin preocuparte por los spoilers."
+        };
+
+        // Firestore collection references
+        const postsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club');
+        const bookInfoDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'config', 'current_book');
+
+        // Authenticate User
+        async function authenticate() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.warn("Autenticación con fallback anónimo", err);
+                await signInAnonymously(auth);
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                subscribeToBookInfo();
+                subscribeToPosts();
+            }
+        });
+
+        authenticate();
+
+        // Subscribe to book metadata
+        function subscribeToBookInfo() {
+            onSnapshot(bookInfoDocRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    bookInfo = { ...bookInfo, ...snapshot.data() };
+                    updateBookBannerUI();
+                } else {
+                    // Initialize default doc
+                    setDoc(bookInfoDocRef, bookInfo).catch(err => console.error("Error setting default book:", err));
+                }
+            }, (error) => {
+                console.error("Error al obtener info del libro:", error);
+            });
+        }
+
+        // Realtime Subscription for posts
+        function subscribeToPosts() {
+            onSnapshot(postsCollectionRef, (snapshot) => {
+                posts = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                posts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                renderPosts();
+            }, (error) => {
+                console.error("Error al sincronizar datos:", error);
+            });
+        }
+
+        const postsGrid = document.getElementById('postsGrid');
+        const emptyState = document.getElementById('emptyState');
+        const postModal = document.getElementById('postModal');
+        const openNewPostModalBtn = document.getElementById('openNewPostModalBtn');
+        const emptyStateBtn = document.getElementById('emptyStateBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const postForm = document.getElementById('postForm');
+        const searchInput = document.getElementById('searchInput');
+        const postCount = document.getElementById('postCount');
+
+        // Admin Modal Controls
+        const adminModal = document.getElementById('adminModal');
+        const openAdminModalBtn = document.getElementById('openAdminModalBtn');
+        const closeAdminModalBtn = document.getElementById('closeAdminModalBtn');
+        const adminForm = document.getElementById('adminForm');
+        const resetBoardBtn = document.getElementById('resetBoardBtn');
+
+        function updateBookBannerUI() {
+            document.getElementById('bookTitleDisplay').textContent = bookInfo.title;
+            document.getElementById('bookAuthorDisplay').textContent = `Autor(a): ${bookInfo.author}`;
+            document.getElementById('bookAuthorCover').textContent = bookInfo.author;
+            document.getElementById('bookDescDisplay').textContent = bookInfo.description;
+            
+            const coverElement = document.getElementById('bookCoverDisplay');
+            const bgUrl = bookInfo.coverUrl || 'https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400';
+            coverElement.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${bgUrl}')`;
+
+            // Populate form inputs
+            document.getElementById('editTitle').value = bookInfo.title || '';
+            document.getElementById('editAuthor').value = bookInfo.author || '';
+            document.getElementById('editCover').value = bookInfo.coverUrl || '';
+            document.getElementById('editDesc').value = bookInfo.description || '';
+        }
+
+        function openAdminModal() {
+            adminModal.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('adminModalContainer').classList.remove('scale-95');
+            document.getElementById('adminModalContainer').classList.add('scale-100');
+        }
+
+        function closeAdminModal() {
+            adminModal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('adminModalContainer').classList.remove('scale-100');
+            document.getElementById('adminModalContainer').classList.add('scale-95');
+        }
+
+        openAdminModalBtn.addEventListener('click', openAdminModal);
+        closeAdminModalBtn.addEventListener('click', closeAdminModal);
+        adminModal.addEventListener('click', (e) => { if (e.target === adminModal) closeAdminModal(); });
+
+        adminForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const updatedData = {
+                title: document.getElementById('editTitle').value.trim() || 'Libro del Mes',
+                author: document.getElementById('editAuthor').value.trim() || 'Autor',
+                coverUrl: document.getElementById('editCover').value.trim(),
+                description: document.getElementById('editDesc').value.trim() || 'Muro de debate del club.'
+            };
+
+            try {
+                await setDoc(bookInfoDocRef, updatedData);
+                closeAdminModal();
+            } catch (err) {
+                console.error("Error al actualizar info del libro:", err);
+            }
+        });
+
+        // Reset Board Functionality
+        resetBoardBtn.addEventListener('click', async () => {
+            if (!currentUser) return;
+            const confirmReset = window.confirm("¿Estás segura de que quieres borrar TODAS las opiniones publicadas en el muro? Esta acción no se puede deshacer.");
+            if (!confirmReset) return;
+
+            try {
+                const snapshot = await getDocs(postsCollectionRef);
+                const deletePromises = snapshot.docs.map(d => deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', d.id)));
+                await Promise.all(deletePromises);
+                closeAdminModal();
+            } catch (err) {
+                console.error("Error al reiniciar el muro:", err);
+            }
+        });
+
+        // Star rating picker
+        const starBtns = document.querySelectorAll('.star-btn');
+        starBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                ratingValue = parseInt(btn.dataset.value);
+                starBtns.forEach((s, idx) => {
+                    if (idx < ratingValue) {
+                        s.classList.remove('text-slate-300');
+                        s.classList.add('text-amber-400');
+                    } else {
+                        s.classList.remove('text-amber-400');
+                        s.classList.add('text-slate-300');
+                    }
+                });
+            });
+        });
+
+        // Modal Controls
+        function openModal() {
+            postModal.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('modalContainer').classList.remove('scale-95');
+            document.getElementById('modalContainer').classList.add('scale-100');
+        }
+
+        function closeModal() {
+            postModal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('modalContainer').classList.remove('scale-100');
+            document.getElementById('modalContainer').classList.add('scale-95');
+            postForm.reset();
+            ratingValue = 5;
+        }
+
+        openNewPostModalBtn.addEventListener('click', openModal);
+        emptyStateBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+
+        postModal.addEventListener('click', (e) => {
+            if (e.target === postModal) closeModal();
+        });
+
+        searchInput.addEventListener('input', renderPosts);
+
+        postForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const name = document.getElementById('authorName').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            const highlight = document.getElementById('highlightText').value.trim();
+
+            if (!name || !content) return;
+
+            const newPost = {
+                author: name,
+                content: content,
+                highlight: highlight || null,
+                rating: ratingValue,
+                likes: 0,
+                createdAt: Date.now(),
+                userId: currentUser.uid
+            };
+
+            try {
+                await addDoc(postsCollectionRef, newPost);
+                closeModal();
+            } catch (err) {
+                console.error("Error al guardar la opinión:", err);
+            }
+        });
+
+        // Like handler
+        window.likePost = async function(postId) {
+            if (!currentUser) return;
+            const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', postId);
+            try {
+                await updateDoc(postRef, {
+                    likes: increment(1)
+                });
+            } catch (err) {
+                console.error("Error al reaccionar:", err);
+            }
+        };
+
+        // Render all posts directly without filters
+        function renderPosts() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            const filtered = posts.filter(post => {
+                if (!searchTerm) return true;
+                return post.author.toLowerCase().includes(searchTerm) || post.content.toLowerCase().includes(searchTerm);
+            });
+
+            postCount.textContent = posts.length;
+
+            if (filtered.length === 0) {
+                postsGrid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+
+            postsGrid.innerHTML = filtered.map((post) => {
+                const stars = Array(5).fill(0).map((_, i) => 
+                    `<i class="fa-solid fa-star ${i < (post.rating || 5) ? 'text-amber-400' : 'text-slate-200'} text-xs"></i>`
+                ).join('');
+
+                const dateStr = post.createdAt 
+                    ? new Date(post.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+                    : 'Reciente';
+
+                return `
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+                        <div>
+                            <!-- Header Info -->
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center text-xs shadow-sm">
+                                        ${post.author.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-sm leading-none">${post.author}</h4>
+                                        <span class="text-[10px] text-slate-400">${dateStr}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-0.5">
+                                    ${stars}
+                                </div>
+                            </div>
+
+                            ${post.highlight ? `
+                                <div class="mb-3 px-3 py-1.5 bg-indigo-50 rounded-lg text-xs text-indigo-900 font-medium italic border-l-2 border-indigo-500">
+                                    "${post.highlight}"
+                                </div>
+                            ` : ''}
+
+                            <!-- Direct Content -->
+                            <div class="my-2">
+                                <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">
+                                    ${post.content}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer -->
+                        <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                            <span class="text-[11px] font-medium text-slate-400 flex items-center gap-1">
+                                <i class="fa-solid fa-check text-emerald-500"></i> Lectura completada
+                            </span>
+                            <button onclick="window.likePost('${post.id}')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg hover:bg-pink-50 hover:text-pink-600 transition-colors">
+                                <i class="fa-solid fa-heart text-pink-500"></i>
+                                <span class="font-semibold text-slate-600 text-[11px]">${post.likes || 0}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
