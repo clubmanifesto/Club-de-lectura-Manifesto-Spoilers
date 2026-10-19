@@ -509,6 +509,86 @@
                 }
             }
         });
+
+        // Modal triggers for New Post
+        function openPostModal() {
+            postModal.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('modalContainer').classList.remove('scale-95');
+            document.getElementById('modalContainer').classList.add('scale-100');
+        }
+
+        function closePostModal() {
+            postModal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('modalContainer').classList.remove('scale-100');
+            document.getElementById('modalContainer').classList.add('scale-95');
+        }
+
+        openNewPostModalBtn.addEventListener('click', openPostModal);
+        emptyStateBtn.addEventListener('click', openPostModal);
+        closeModalBtn.addEventListener('click', closePostModal);
+        postModal.addEventListener('click', (e) => { if (e.target === postModal) closePostModal(); });
+
+        // Reply Modal triggers
+        window.openReplyModal = function(postId) {
+            document.getElementById('replyPostId').value = postId;
+            replyModal.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('replyModalContainer').classList.remove('scale-95');
+            document.getElementById('replyModalContainer').classList.add('scale-100');
+        };
+
+        function closeReplyModal() {
+            replyModal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('replyModalContainer').classList.remove('scale-100');
+            document.getElementById('replyModalContainer').classList.add('scale-95');
+            replyForm.reset();
+        }
+
+        closeReplyModalBtn.addEventListener('click', closeReplyModal);
+        replyModal.addEventListener('click', (e) => { if (e.target === replyModal) closeReplyModal(); });
+
+        // Submit New Post Logic
+        postForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const author = document.getElementById('authorName').value.trim();
+            const highlight = document.getElementById('highlightText').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+
+            if (!author || !content) return;
+
+            const fullTextToCheck = `${author} ${highlight} ${content}`.toLowerCase();
+            if (badWords.some(word => fullTextToCheck.includes(word))) {
+                alert("⚠️ Por favor evita incluir palabras inapropiadas en tu comentario.");
+                return;
+            }
+
+            const newPost = {
+                author,
+                highlight,
+                content,
+                likes: 0,
+                replies: [],
+                createdAt: Date.now()
+            };
+
+            // Immediate local UI update
+            const localPostObj = { id: 'local_' + Date.now(), ...newPost };
+            posts.unshift(localPostObj);
+            saveLocalPosts(posts);
+            renderPosts();
+
+            postForm.reset();
+            closePostModal();
+
+            if (postsCollectionRef) {
+                try {
+                    await addDoc(postsCollectionRef, newPost);
+                } catch (err) {
+                    console.warn("Firestore sync fallback active for new post:", err.message);
+                }
+            }
+        });
+
         // Submit Reply Logic with Fallback
         replyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -554,8 +634,25 @@
                 }
             }
         });
-                } catch (err) {
-                    console.warn("Firestore like sync fallback active:", err.message);
+
+        // Search Input Listener
+        searchInput.addEventListener('input', renderPosts);
+
+        // Like Post Handler
+        window.likePost = async function(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.likes = (post.likes || 0) + 1;
+                saveLocalPosts(posts);
+                renderPosts();
+
+                if (db && !postId.startsWith('local_')) {
+                    try {
+                        const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', postId);
+                        await updateDoc(postRef, { likes: increment(1) });
+                    } catch (err) {
+                        console.warn("Firestore like sync fallback active:", err.message);
+                    }
                 }
             }
         };
@@ -662,3 +759,9 @@
     </script>
 </body>
 </html>
+```
+
+### Resumen de correcciones aplicadas:
+1. **Sintaxis de JavaScript reparada:** Se eliminaron bloques duplicados y mal cerrados que causaban un error de compilación.
+2. **Cierre Automático General:** Todas las ventanas flotantes (Publicar Opinión, Responder a una Opinión, Administrar Libro y Borrar Opiniones) se cierran automáticamente al momento de presionar el botón de confirmar.
+3. **Cadenas de Respuestas Funcionales:** El botón **"Responder"** abre la ventana correspondiente y anida los comentarios en el hilo del mensaje original.
