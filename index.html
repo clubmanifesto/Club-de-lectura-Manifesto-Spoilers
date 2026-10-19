@@ -625,7 +625,7 @@
                 userId: currentUser ? currentUser.uid : 'anon'
             };
 
-            // Immediate local UI update
+            // Immediate local UI update and auto-close modal
             posts.unshift(newPost);
             saveLocalPosts(posts);
             renderPosts();
