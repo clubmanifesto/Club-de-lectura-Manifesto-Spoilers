@@ -199,12 +199,6 @@
             <!-- Modal Body Form -->
             <form id="postForm" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Clave de Acceso del Club <span class="text-purple-500">*</span></label>
-                    <input type="password" id="clubPasscode" required placeholder="Clave que les diste por WhatsApp (Ej. club2026)" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
-                    <span class="text-[10px] text-slate-400 mt-1 block">Si no le han cambiado la clave, escribe: <strong>club2026</strong></span>
-                </div>
-
-                <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Tu Nombre o Apodo <span class="text-purple-500">*</span></label>
                     <input type="text" id="authorName" required placeholder="Ej. Sofia G." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
                 </div>
@@ -231,7 +225,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, deleteDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, deleteDoc, increment, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase Configuration Setup
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'club-lectura-muro';
@@ -252,9 +246,6 @@
 
         let currentUser = null;
         let posts = [];
-
-        // Passcode for members (default: club2026)
-        let clubPasscodeValue = 'club2026';
 
         // Profanity list for basic content moderation
         const badWords = ['puta', 'puto', 'mierda', 'pendejo', 'pendeja', 'verga', 'cabron', 'cabrona', 'chinga', 'maldito', 'maldita'];
@@ -443,20 +434,13 @@
 
         searchInput.addEventListener('input', renderPosts);
 
-        // Submit Review Logic (Fixed)
+        // Submit Review Logic
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const passcodeEntered = document.getElementById('clubPasscode').value.trim();
             const name = document.getElementById('authorName').value.trim();
             const content = document.getElementById('postContent').value.trim();
             const highlight = document.getElementById('highlightText').value.trim();
-
-            // Validate Passcode
-            if (passcodeEntered.toLowerCase() !== clubPasscodeValue.toLowerCase()) {
-                alert("❌ La clave de acceso del club es incorrecta. Escribe: club2026");
-                return;
-            }
 
             if (!name || !content) return;
 
@@ -487,7 +471,6 @@
                 closeModal();
             } catch (err) {
                 console.error("Error al guardar la opinión:", err);
-                // Fallback local refresh if server write encounters temporary auth issue
                 closeModal();
             }
         });
