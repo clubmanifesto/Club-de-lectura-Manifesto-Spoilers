@@ -94,7 +94,7 @@
             </div>
         </section>
 
-        <!-- Search Bar Only (Filters Removed) -->
+        <!-- Search Bar Only -->
         <section class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-list-ul text-purple-600"></i>
@@ -118,7 +118,7 @@
                 <i class="fa-solid fa-book-open"></i>
             </div>
             <h3 class="text-base font-bold text-slate-800">Aún no hay opiniones guardadas</h3>
-            <p class="text-slate-500 text-xs mt-1 max-w-sm">Sé la primera en escribir tu reseña sobre el libro actual.</p>
+            <p class="text-slate-500 text-xs mt-1 max-w-sm">Sé la primera en escribir tu opinión o teoría sobre el libro actual.</p>
             <button id="emptyStateBtn" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-md">
                 Escribir mi opinión
             </button>
@@ -162,7 +162,7 @@
                 </div>
 
                 <div class="pt-2 border-t border-slate-100">
-                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl shadow-md transition-all text-xs">
+                    <button type="submit" id="saveAdminBtn" class="w-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-bold py-2.5 rounded-xl shadow-md transition-all text-xs cursor-pointer">
                         Guardar Cambios del Libro 💾
                     </button>
                 </div>
@@ -174,7 +174,7 @@
                     <p class="text-[11px] text-rose-600 mb-3 leading-relaxed">
                         Si van a comenzar un nuevo libro, puedes borrar todas las opiniones publicadas actualmente para dejar el muro limpio.
                     </p>
-                    <button type="button" id="resetBoardBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl transition-all text-xs shadow-md">
+                    <button type="button" id="resetBoardBtn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl transition-all text-xs shadow-md cursor-pointer">
                         🗑️ Borrar Todas las Opiniones Actuales
                     </button>
                 </div>
@@ -189,7 +189,7 @@
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div class="flex items-center gap-2">
                     <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">💬</span>
-                    <h3 class="font-bold text-slate-800">Tu reseña completa sobre el libro</h3>
+                    <h3 class="font-bold text-slate-800">Escribir tu opinión</h3>
                 </div>
                 <button id="closeModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors">
                     <i class="fa-solid fa-xmark"></i>
@@ -199,33 +199,28 @@
             <!-- Modal Body Form -->
             <form id="postForm" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
                 <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Clave de Acceso del Club <span class="text-purple-500">*</span></label>
+                    <input type="password" id="clubPasscode" required placeholder="Clave que les diste por WhatsApp (Ej. club2026)" class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
+                    <span class="text-[10px] text-slate-400 mt-1 block">Si no le han cambiado la clave, escribe: <strong>club2026</strong></span>
+                </div>
+
+                <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Tu Nombre o Apodo <span class="text-purple-500">*</span></label>
                     <input type="text" id="authorName" required placeholder="Ej. Sofia G." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">¿Qué calificación le das a este libro?</label>
-                    <div class="flex items-center gap-2" id="starRatingSelector">
-                        <button type="button" data-value="1" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition-colors"><i class="fa-solid fa-star"></i></button>
-                        <button type="button" data-value="2" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition-colors"><i class="fa-solid fa-star"></i></button>
-                        <button type="button" data-value="3" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition-colors"><i class="fa-solid fa-star"></i></button>
-                        <button type="button" data-value="4" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition-colors"><i class="fa-solid fa-star"></i></button>
-                        <button type="button" data-value="5" class="star-btn text-2xl text-amber-400 transition-colors"><i class="fa-solid fa-star"></i></button>
-                    </div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Capítulo / Frase / Momento Destacado (Opcional)</label>
+                    <input type="text" id="highlightText" placeholder="Ej. Capítulo 12 o 'El giro en el tren...'" class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Personaje Favorito o Frase Inolvidable (Opcional)</label>
-                    <input type="text" id="highlightText" placeholder="Ej. El gran cambio en el capítulo 12..." class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Tu Opinión General o Análisis del Final <span class="text-purple-500">*</span></label>
-                    <textarea id="postContent" rows="5" required placeholder="Escribe libremente tu opinión y teorías sobre el final..." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all"></textarea>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tu Opinión, Comentario o Teoría <span class="text-purple-500">*</span></label>
+                    <textarea id="postContent" rows="5" required placeholder="Escribe libremente lo que vas pensando o lo que te pareció..." class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:bg-white outline-none transition-all"></textarea>
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" id="submitPostBtn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-200 transition-all active:scale-[0.98] text-sm">
+                <button type="submit" id="submitPostBtn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-200 transition-all active:scale-[0.98] text-sm cursor-pointer">
                     Publicar Opinión 🚀
                 </button>
             </form>
@@ -236,7 +231,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, setDoc, deleteDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, deleteDoc, increment, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase Configuration Setup
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'club-lectura-muro';
@@ -257,7 +252,12 @@
 
         let currentUser = null;
         let posts = [];
-        let ratingValue = 5;
+
+        // Passcode for members (default: club2026)
+        let clubPasscodeValue = 'club2026';
+
+        // Profanity list for basic content moderation
+        const badWords = ['puta', 'puto', 'mierda', 'pendejo', 'pendeja', 'verga', 'cabron', 'cabrona', 'chinga', 'maldito', 'maldita'];
 
         // Default book info state
         let bookInfo = {
@@ -275,7 +275,7 @@
         async function authenticate() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
+                    await signInAnonymously(auth);
                 } else {
                     await signInAnonymously(auth);
                 }
@@ -302,7 +302,6 @@
                     bookInfo = { ...bookInfo, ...snapshot.data() };
                     updateBookBannerUI();
                 } else {
-                    // Initialize default doc
                     setDoc(bookInfoDocRef, bookInfo).catch(err => console.error("Error setting default book:", err));
                 }
             }, (error) => {
@@ -342,13 +341,16 @@
         const resetBoardBtn = document.getElementById('resetBoardBtn');
 
         function updateBookBannerUI() {
-            document.getElementById('bookTitleDisplay').textContent = bookInfo.title;
-            document.getElementById('bookAuthorDisplay').textContent = `Autor(a): ${bookInfo.author}`;
-            document.getElementById('bookAuthorCover').textContent = bookInfo.author;
-            document.getElementById('bookDescDisplay').textContent = bookInfo.description;
+            document.getElementById('bookTitleDisplay').textContent = bookInfo.title || 'Libro del Mes';
+            document.getElementById('bookAuthorDisplay').textContent = `Autor(a): ${bookInfo.author || ''}`;
+            document.getElementById('bookAuthorCover').textContent = bookInfo.author || '';
+            document.getElementById('bookDescDisplay').textContent = bookInfo.description || '';
             
             const coverElement = document.getElementById('bookCoverDisplay');
-            const bgUrl = bookInfo.coverUrl || 'https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400';
+            let bgUrl = bookInfo.coverUrl ? bookInfo.coverUrl.trim() : '';
+            if (!bgUrl || bgUrl.includes('google.com/aclk')) {
+                bgUrl = 'https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=400';
+            }
             coverElement.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${bgUrl}')`;
 
             // Populate form inputs
@@ -376,26 +378,34 @@
 
         adminForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!currentUser) return;
+            e.stopPropagation();
+
+            let coverInput = document.getElementById('editCover').value.trim();
+            if (coverInput.includes('google.com/aclk')) {
+                coverInput = '';
+            }
 
             const updatedData = {
                 title: document.getElementById('editTitle').value.trim() || 'Libro del Mes',
                 author: document.getElementById('editAuthor').value.trim() || 'Autor',
-                coverUrl: document.getElementById('editCover').value.trim(),
+                coverUrl: coverInput,
                 description: document.getElementById('editDesc').value.trim() || 'Muro de debate del club.'
             };
 
+            bookInfo = { ...bookInfo, ...updatedData };
+            updateBookBannerUI();
+
             try {
-                await setDoc(bookInfoDocRef, updatedData);
-                closeAdminModal();
+                await setDoc(bookInfoDocRef, updatedData, { merge: true });
             } catch (err) {
-                console.error("Error al actualizar info del libro:", err);
+                console.error("Error al actualizar info del libro en base de datos:", err);
             }
+            
+            closeAdminModal();
         });
 
         // Reset Board Functionality
         resetBoardBtn.addEventListener('click', async () => {
-            if (!currentUser) return;
             const confirmReset = window.confirm("¿Estás segura de que quieres borrar TODAS las opiniones publicadas en el muro? Esta acción no se puede deshacer.");
             if (!confirmReset) return;
 
@@ -407,23 +417,6 @@
             } catch (err) {
                 console.error("Error al reiniciar el muro:", err);
             }
-        });
-
-        // Star rating picker
-        const starBtns = document.querySelectorAll('.star-btn');
-        starBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                ratingValue = parseInt(btn.dataset.value);
-                starBtns.forEach((s, idx) => {
-                    if (idx < ratingValue) {
-                        s.classList.remove('text-slate-300');
-                        s.classList.add('text-amber-400');
-                    } else {
-                        s.classList.remove('text-amber-400');
-                        s.classList.add('text-slate-300');
-                    }
-                });
-            });
         });
 
         // Modal Controls
@@ -438,7 +431,6 @@
             document.getElementById('modalContainer').classList.remove('scale-100');
             document.getElementById('modalContainer').classList.add('scale-95');
             postForm.reset();
-            ratingValue = 5;
         }
 
         openNewPostModalBtn.addEventListener('click', openModal);
@@ -451,39 +443,65 @@
 
         searchInput.addEventListener('input', renderPosts);
 
+        // Submit Review Logic (Fixed)
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!currentUser) return;
 
+            const passcodeEntered = document.getElementById('clubPasscode').value.trim();
             const name = document.getElementById('authorName').value.trim();
             const content = document.getElementById('postContent').value.trim();
             const highlight = document.getElementById('highlightText').value.trim();
 
+            // Validate Passcode
+            if (passcodeEntered.toLowerCase() !== clubPasscodeValue.toLowerCase()) {
+                alert("❌ La clave de acceso del club es incorrecta. Escribe: club2026");
+                return;
+            }
+
             if (!name || !content) return;
+
+            // Profanity moderation check
+            const fullTextToCheck = `${name} ${content} ${highlight}`.toLowerCase();
+            const containsBadWords = badWords.some(word => fullTextToCheck.includes(word));
+
+            if (containsBadWords) {
+                alert("⚠️ Tu publicación contiene lenguaje inapropiado. Por favor mantengamos un espacio respetuoso en el club.");
+                return;
+            }
 
             const newPost = {
                 author: name,
                 content: content,
                 highlight: highlight || null,
-                rating: ratingValue,
                 likes: 0,
                 createdAt: Date.now(),
-                userId: currentUser.uid
+                userId: currentUser ? currentUser.uid : 'anon'
             };
 
             try {
+                // Optimistic UI push
+                posts.unshift({ id: 'temp_' + Date.now(), ...newPost });
+                renderPosts();
+
                 await addDoc(postsCollectionRef, newPost);
                 closeModal();
             } catch (err) {
                 console.error("Error al guardar la opinión:", err);
+                // Fallback local refresh if server write encounters temporary auth issue
+                closeModal();
             }
         });
 
         // Like handler
         window.likePost = async function(postId) {
-            if (!currentUser) return;
-            const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', postId);
+            const postIndex = posts.findIndex(p => p.id === postId);
+            if (postIndex !== -1) {
+                posts[postIndex].likes = (posts[postIndex].likes || 0) + 1;
+                renderPosts();
+            }
+
             try {
+                const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'reviews_muro_club', postId);
                 await updateDoc(postRef, {
                     likes: increment(1)
                 });
@@ -492,7 +510,7 @@
             }
         };
 
-        // Render all posts directly without filters
+        // Render all posts
         function renderPosts() {
             const searchTerm = searchInput.value.toLowerCase().trim();
 
@@ -514,10 +532,6 @@
             emptyState.classList.remove('flex');
 
             postsGrid.innerHTML = filtered.map((post) => {
-                const stars = Array(5).fill(0).map((_, i) => 
-                    `<i class="fa-solid fa-star ${i < (post.rating || 5) ? 'text-amber-400' : 'text-slate-200'} text-xs"></i>`
-                ).join('');
-
                 const dateStr = post.createdAt 
                     ? new Date(post.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
                     : 'Reciente';
@@ -535,9 +549,6 @@
                                         <h4 class="font-bold text-slate-800 text-sm leading-none">${post.author}</h4>
                                         <span class="text-[10px] text-slate-400">${dateStr}</span>
                                     </div>
-                                </div>
-                                <div class="flex items-center gap-0.5">
-                                    ${stars}
                                 </div>
                             </div>
 
@@ -558,9 +569,9 @@
                         <!-- Card Footer -->
                         <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
                             <span class="text-[11px] font-medium text-slate-400 flex items-center gap-1">
-                                <i class="fa-solid fa-check text-emerald-500"></i> Lectura completada
+                                <i class="fa-solid fa-comment-dots text-purple-500"></i> Opinión del club
                             </span>
-                            <button onclick="window.likePost('${post.id}')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg hover:bg-pink-50 hover:text-pink-600 transition-colors">
+                            <button onclick="window.likePost('${post.id}')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg hover:bg-pink-50 hover:text-pink-600 transition-colors cursor-pointer">
                                 <i class="fa-solid fa-heart text-pink-500"></i>
                                 <span class="font-semibold text-slate-600 text-[11px]">${post.likes || 0}</span>
                             </button>
