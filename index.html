@@ -91,34 +91,92 @@
             </div>
         </section>
 
-        <!-- Search Bar -->
-        <section class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-list-ul text-purple-600"></i>
-                <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Muro Abierto de Opiniones</span>
-            </div>
-            
-            <div class="relative w-full sm:w-80">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por integrante o contenido..." class="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-all">
-            </div>
-        </section>
+        <!-- Secciones principales: avances y muro con la misma prioridad -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
-        <!-- Cards Container -->
-        <div id="postsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <!-- Dynamic Posts render here -->
-        </div>
+            <!-- Reading Progress Gadget -->
+            <section class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-5 md:p-6 h-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+                    <div>
+                        <div class="flex items-center gap-2 text-purple-700 mb-1">
+                            <i class="fa-solid fa-book-open-reader"></i>
+                            <span class="text-xs font-bold uppercase tracking-wider">Seguimiento de lectura</span>
+                        </div>
+                        <h2 class="text-xl font-extrabold text-slate-900">¿Cuánto llevamos leído? 📚</h2>
+                        <p class="text-xs text-slate-500 mt-1">Comparte tu avance para que todas podamos seguir el ritmo del club.</p>
+                    </div>
+                    <button type="button" onclick="loadProgress()" class="self-start px-3 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-rotate"></i> Actualizar
+                    </button>
+                </div>
 
-        <!-- Empty state -->
-        <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center bg-white rounded-3xl border border-dashed border-slate-300">
-            <div class="w-16 h-16 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-3">
-                <i class="fa-solid fa-book-open"></i>
-            </div>
-            <h3 class="text-base font-bold text-slate-800">Aún no hay opiniones guardadas</h3>
-            <p class="text-slate-500 text-xs mt-1 max-w-sm">Sé la primera en escribir tu opinión o teoría sobre el libro actual.</p>
-            <button id="emptyStateBtn" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-md cursor-pointer">
-                Escribir mi opinión
-            </button>
+                <form id="progressForm" class="bg-purple-50/70 border border-purple-100 rounded-2xl p-4 space-y-3 mb-5">
+                    <div class="flex items-center gap-2 text-purple-800 font-bold text-sm">
+                        <i class="fa-solid fa-pen-to-square"></i> Registrar mi avance
+                    </div>
+                    <div>
+                        <label for="progressName" class="block text-xs font-bold text-slate-700 mb-1">Tu nombre o apodo</label>
+                        <input id="progressName" type="text" maxlength="50" required placeholder="Ej. Ana" class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label for="progressPercent" class="text-xs font-bold text-slate-700">¿Qué porcentaje llevas?</label>
+                            <span id="progressPercentLabel" class="text-lg font-extrabold text-purple-700">0%</span>
+                        </div>
+                        <input id="progressPercent" type="range" min="0" max="100" step="1" value="0" class="w-full accent-purple-600 cursor-pointer">
+                        <div class="flex justify-between text-[10px] text-slate-400"><span>Inicio · 0%</span><span>Terminé · 100%</span></div>
+                    </div>
+                    <button id="saveProgressBtn" type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-2.5 rounded-xl shadow-md shadow-purple-200 transition-all text-xs">
+                        Guardar mi avance 💜
+                    </button>
+                    <p id="progressMessage" class="text-[11px] text-center text-slate-500" role="status" aria-live="polite">Si ya registraste tu nombre, puedes actualizar tu porcentaje.</p>
+                </form>
+
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-bold text-slate-800 text-sm">Avance de las integrantes</h3>
+                        <span id="progressCount" class="text-[10px] font-semibold text-slate-400">0 integrantes</span>
+                    </div>
+                    <div id="progressList" class="space-y-3">
+                        <div class="text-center py-8 text-xs text-slate-400 bg-slate-50 rounded-2xl">Cargando avances...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reading Wall -->
+            <section class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-5 md:p-6 h-full">
+                <div class="mb-4">
+                    <div class="flex items-center gap-2 text-purple-700 mb-1">
+                        <i class="fa-solid fa-comments"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider">Conversación del club</span>
+                    </div>
+                    <h2 class="text-xl font-extrabold text-slate-900">Muro de opiniones 💬</h2>
+                    <p class="text-xs text-slate-500 mt-1">Comparte teorías, comentarios y spoilers del libro en turno.</p>
+                </div>
+
+                <div class="relative mb-4">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar por integrante o contenido..." class="w-full pl-9 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-all">
+                </div>
+
+                <!-- Cards Container -->
+                <div id="postsGrid" class="grid grid-cols-1 gap-4">
+                    <!-- Dynamic Posts render here -->
+                </div>
+
+                <!-- Empty state -->
+                <div id="emptyState" class="hidden flex-col items-center justify-center py-12 px-4 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-300">
+                    <div class="w-14 h-14 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-3">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800">Aún no hay opiniones guardadas</h3>
+                    <p class="text-slate-500 text-xs mt-1 max-w-sm">Sé la primera en escribir tu opinión o teoría sobre el libro actual.</p>
+                    <button id="emptyStateBtn" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-md cursor-pointer">
+                        Escribir mi opinión
+                    </button>
+                </div>
+            </section>
+
         </div>
     </main>
 
@@ -237,6 +295,7 @@
 
         let bookInfo = { title: "Cargando...", author: "", coverUrl: "", description: "" };
         let posts = [];
+        let readingProgress = [];
 
         const badWords = ['puta', 'puto', 'mierda', 'pendejo', 'pendeja', 'verga', 'cabron', 'cabrona', 'chinga', 'maldito', 'maldita'];
 
@@ -250,10 +309,99 @@
                 posts = await resPosts.json();
                 posts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 renderPosts();
+                await loadProgress();
             } catch (err) {
                 console.error("Error al cargar datos de Sheets:", err);
             }
         }
+
+        async function loadProgress() {
+            const list = document.getElementById('progressList');
+            try {
+                const response = await fetch(WEB_APP_URL + '?action=getProgress&t=' + Date.now());
+                if (!response.ok) throw new Error('No se pudo consultar el avance.');
+                readingProgress = await response.json();
+                if (!Array.isArray(readingProgress)) throw new Error('Respuesta inválida del servidor.');
+                renderProgress();
+            } catch (error) {
+                console.error('Error al cargar avances:', error);
+                list.innerHTML = '<div class="text-center py-6 px-3 text-xs text-rose-500 bg-rose-50 rounded-2xl">No se pudieron cargar los avances. Intenta actualizar nuevamente.</div>';
+            }
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+            }[char]));
+        }
+
+        function renderProgress() {
+            const list = document.getElementById('progressList');
+            const count = document.getElementById('progressCount');
+            count.textContent = `${readingProgress.length} ${readingProgress.length === 1 ? 'integrante' : 'integrantes'}`;
+
+            if (!readingProgress.length) {
+                list.innerHTML = '<div class="text-center py-8 px-3 text-xs text-slate-400 bg-slate-50 rounded-2xl"><i class="fa-solid fa-book-open text-2xl text-purple-200 mb-2 block"></i>Aún no hay avances registrados. ¡Anímate a ser la primera!</div>';
+                return;
+            }
+
+            const sorted = [...readingProgress].sort((a, b) => Number(b.percent) - Number(a.percent));
+            list.innerHTML = sorted.map(item => {
+                const name = escapeHtml(item.name);
+                const percent = Math.max(0, Math.min(100, Number(item.percent) || 0));
+                const initial = escapeHtml((item.name || '?').trim().charAt(0).toUpperCase());
+                return `
+                    <div class="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/70">
+                        <div class="flex items-center justify-between gap-3 mb-2">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0">${initial}</div>
+                                <span class="font-bold text-slate-700 text-xs truncate">${name}</span>
+                            </div>
+                            <span class="font-extrabold text-purple-700 text-sm tabular-nums">${percent}%</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full bg-gradient-to-r from-purple-600 to-indigo-500 transition-all duration-500" style="width:${percent}%"></div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-1.5">${percent === 100 ? '¡Libro terminado! 🎉' : percent === 0 ? '¡A comenzar la lectura!' : '¡Sigue leyendo!'}</div>
+                    </div>`;
+            }).join('');
+        }
+
+        document.getElementById('progressPercent').addEventListener('input', function() {
+            document.getElementById('progressPercentLabel').textContent = this.value + '%';
+        });
+
+        document.getElementById('progressForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('progressName').value.trim();
+            const percent = Number(document.getElementById('progressPercent').value);
+            const button = document.getElementById('saveProgressBtn');
+            const message = document.getElementById('progressMessage');
+            if (!name) return;
+
+            button.disabled = true;
+            button.textContent = 'Guardando...';
+            message.textContent = 'Guardando tu avance...';
+            message.className = 'text-[11px] text-center text-slate-500';
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'saveProgress', name, percent })
+                });
+                const result = await response.json();
+                if (result.status !== 'success') throw new Error(result.message || 'No se pudo guardar el avance.');
+                message.textContent = '¡Tu avance quedó guardado! 💜';
+                message.className = 'text-[11px] text-center text-emerald-600 font-semibold';
+                await loadProgress();
+            } catch (error) {
+                console.error('Error al guardar avance:', error);
+                message.textContent = 'No se pudo guardar. Intenta nuevamente.';
+                message.className = 'text-[11px] text-center text-rose-600';
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Guardar mi avance 💜';
+            }
+        });
 
         function updateBookBannerUI() {
             document.getElementById('bookTitleDisplay').textContent = bookInfo.title || 'Libro del Mes';
@@ -390,6 +538,7 @@
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
+            await loadProgress();
         });
 
         document.getElementById('resetBoardBtn').addEventListener('click', async () => {
